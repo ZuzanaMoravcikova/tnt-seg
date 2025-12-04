@@ -1,0 +1,10 @@
+numpy
+scikit-image
+scipy
+imageio
+torch
+pytorch-lightning
+torchmetrics
+MedPy
+bio-volumentations
+imagecodecs
