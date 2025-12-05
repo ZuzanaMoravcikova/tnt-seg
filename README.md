@@ -34,21 +34,94 @@ which is licensed under the MIT License (c) 2020 ineedzx.
    ```bash
    pip install wandb
    ```
+---
+## Project structure
+The source code of the TNT segmentation framework is organized as follows:
+```text
+tnt-seg/
+  ├─ checkpoints_thesis/
+  │    ├─ quadrant_0.ckpt
+  │    ├─ quadrant_1.ckpt
+  │    ├─ quadrant_2.ckpt
+  │    └─ quadrant_3.ckpt
+  │
+  ├─ data_preparation/
+  │    ├─ __init__.py
+  │    ├─ synth_tubular_dataset.py
+  │    ├─ tnt_crops.py
+  │    ├─ tnt_dataset_final.py
+  │    ├─ tnt_io.py
+  │    └─ tnt_regions.py
+  │
+  ├─ model/
+  │    ├─ __init__.py
+  │    ├─ csnet_3d.py
+  │    └─ csnet_3d_lightning.py
+  │
+  ├─ utils/
+  │    ├─ __init__.py
+  │    ├─ losses.py
+  │    ├─ my_metrics.py
+  │    ├─ my_typing.py
+  │    └─ transforms.py
+  │
+  ├─ .gitignore
+  ├─ eval_from_file.py
+  ├─ README.md
+  ├─ requirements.txt
+  ├─ test.py
+  └─ train.py
+```
+The directory `checkpoints_thesis` stores pretrained model checkpoints for quadrants 0--3. 
+These files can be used for running the evaluation and for reproducing the results presented in this thesis.
+
+The directory `data_preparation` contains all code related to preparing the image data for training and testing. 
+The scripts in this folder load the TNT data, create train--test splits, generate patches for training, 
+and wrap this functionality into a PyTorch Lightning datamodule.
+
+The directory `model` implements the segmentation network and its PyTorch Lightning module, 
+which encapsulates the training, validation, and inference logic.
+
+The directory `utils` collects various helper functions and definitions, including loss functions, 
+evaluation metrics, type definitions, and data transformations and augmentations.
+
+The script `train.py` is the main training entry point, while `test.py` is used to evaluate a trained model.
+
+The script `eval_from_file.py` provides a standalone evaluation tool that operates on previously saved predictions.
 
 ---
+## Data format 
 
+The scripts expect a TNT dataset organized in a folder structure compatible with:
+
+```text
+<data_path>/
+  ├─ 01/
+  │    ├─ t000.tif
+  │    ├─ t001.tif
+  │    ├─ ...
+  │    └─ t019.tif
+  │
+  └─ 01_GT/
+        └─SEG/
+            ├─ mask000.tif
+            └─ mask017.tif
+```
+
+---
 ## Running the training
 
 Training is performed using `train.py`, which exposes many configurable command-line arguments.
 
 ### Basic training command
 ```bash
-python train.py --data_path /path/to/dataset
+python train.py --data_path </path/to/dataset> --test_quadrant <i>
 ```
 
 This will:
 
 - load the TNT dataset,
+- reserve quadrant `i` for testing,
 - initialize the 3D CSNet model,
 - apply default augmentations,
 - train for 200 epochs,
@@ -69,7 +142,7 @@ This will:
 
 ```bash
 python train.py \
-    --data_path /path/to/data \
+    --data_path </path/to/data> \
     --epochs 150 \
     --batch_size 2 \
     --lr 5e-5 \
@@ -98,7 +171,7 @@ After training, the model is automatically evaluated on the test set.
 
 ```bash
 python test.py \
-  --data_path /path/to/data \
+  --data_path </path/to/data> \
   --ckpt_file checkpoints_thesis/quadrant_0.ckpt \
   --test_quadrant 0
 ```
@@ -107,7 +180,7 @@ python test.py \
 Each row corresponds to a different cross-validation quadrant.  
 To reproduce the predictions in row *i*, run:
 ```bash
-python test.py --data_path /path/to/data --ckpt_file checkpoints_thesis/quadrant_i.ckpt --test_quadrant i
+python test.py --data_path </path/to/data> --ckpt_file checkpoints_thesis/quadrant_<i>.ckpt --test_quadrant <i>
 ```
 <img src="images/input-output_examples.png" width="600">
 
@@ -138,7 +211,7 @@ During evaluation, the script can optionally save a subset of test samples
 Each saved volume is stored as a `.npy` file named:
 
 ```
-sample_k.npy
+sample_<k>.npy
 ```
 
 These can be loaded in Python or visualized in **napari**.
@@ -147,7 +220,7 @@ These can be loaded in Python or visualized in **napari**.
 
 ```bash
 python test.py \
-    --data_path /path/to/data \
+    --data_path </path/to/data> \
     --ckpt_file ./checkpoints_thesis/quadrant_0.ckpt \
     --test_quadrant 0 \
     --num_samples_to_save 2 \
