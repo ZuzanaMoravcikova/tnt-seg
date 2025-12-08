@@ -1,3 +1,11 @@
+# -------------------------------------------------------------
+# Author: Zuzana Moravčíková
+# Project: Deep-Learning-Based Segmentation of Tunneling Nanotubes in Volumetric Bioimage Data
+# Year: 2025
+# Contact: 514286@mail.muni.cz
+# License: MIT
+# -------------------------------------------------------------
+
 # This file is partially adapted from:
 # CS2-Net: "cs2net" implementation (c) 2020 ineedzx, MIT License.
 # Original repository: https://github.com/iMED-Lab/CS-Net

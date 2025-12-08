@@ -1,3 +1,11 @@
+# -------------------------------------------------------------
+# Author: Zuzana Moravčíková
+# Project: Deep-Learning-Based Segmentation of Tunneling Nanotubes in Volumetric Bioimage Data
+# Year: 2025
+# Contact: 514286@mail.muni.cz
+# License: MIT
+# -------------------------------------------------------------
+
 from typing import List, Tuple, Sequence, Literal
 import random
 import numpy as np
