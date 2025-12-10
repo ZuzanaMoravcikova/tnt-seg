@@ -20,8 +20,6 @@ from data_preparation.tnt_regions import quadrant_rect_coords, suggest_validatio
 from data_preparation.tnt_crops import extract_all_crops, crop_zeros, crops_zeros_all, sample_random_patches_all
 from utils.transforms import center_crop_or_pad_after_transform
 
-import napari
-
 
 class TNTDatasetMasked(Dataset):
     """3D TNT dataset with rectangular masking and cropping strategies.
@@ -408,51 +406,3 @@ class TntLightningDataModule(pl.LightningDataModule):
                           batch_size=self.batch_size,
                           shuffle=False,
                           num_workers=self.num_workers)
-#
-# -----------------------------------------------------------------------------
-if __name__ == "__main__":
-# #     import multiprocessing as mp
-# #     mp.freeze_support()  # safe on Windows; ok to omit if not freezing to EXE
-# #     try:
-# #         mp.set_start_method("spawn", force=True)  # explicit on Windows
-# #     except RuntimeError:
-# #         pass  # already set
-# #
-    from utils.transforms import bv_train_transform, bv_test_transform
-# #
-# #
-    path = r"C:/muni/DP/180322_Sqh-mCh_Tub-GFP_16h_110/180322_Sqh-mCh Tub-GFP 16h_110"
-#
-    dm_1 = TntLightningDataModule(
-        path, batch_size=1, num_workers=0,  # <-- 0 avoids multiprocessing while testing
-        train_transform=bv_test_transform(), test_transform=bv_test_transform(), masked_part=0,
-        final_zyx=(7, 128, 128)
-    )
-# #     # dm_2 = TntLightningDataModule(
-# #     #     path, batch_size=1, num_workers=0,  # <-- same here
-# #     #     train_transform=bv_train_transform(), test_transform=bv_test_transform(), masked_part=0,
-# #     #     full_test_image=True, final_zyx=(7, 128, 128)
-# #     # )
-# #
-    dm_1.setup()
-# #     # dm_2.setup()
-    test_loader_1 = dm_1.test_dataloader()
-    train_loader_1 = dm_1.train_dataloader()
-    val_loader_1 = dm_1.val_dataloader()
-#
-#     print(len(val_loader_1))
-#     print(len(train_loader_1))
-#     print(len(test_loader_1))
-#
-#     for batch in val_loader_1:
-#         images, masks = batch
-#         print(f"Image shape: {images.shape}, Mask shape: {masks.shape}") #, print(f"ROI shape: {roi.shape}"))
-#         #
-#         viewer = napari.Viewer()
-#         viewer.add_image(images[0, 0].numpy(), name='image')
-#         viewer.add_labels(masks[0, 0].numpy(), name='mask')
-#         # viewer.add_labels(roi[0, 0].numpy(), name='roi')
-#         napari.run()
-#
-#         break
-
